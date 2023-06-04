@@ -2,13 +2,16 @@ const {
     generateMnemonic,
     generateWallet,
     getWalletBalance,
+    airdropSol,
+} = require('./src/services/solanaWalletService');
+
+const {
     getTokenBalance,
     getTransactionHistory,
     getTokenTransactionHistory,
-    airdropSol,
-    setSolanaEndpoint,
-    getAllTokenBalances,
-} = require('./src/services/solanaService');
+} = require('./src/services/solanaTransactionService');
+
+const { setSolanaEndpoint } = require('./src/services/solanaConnectionService');
 
 async function test() {
     // Generate a mnemonic phrase
