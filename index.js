@@ -1,8 +1,12 @@
 const {
     generateMnemonic,
     generateWallet,
+    generate_Sol_wallet,
+    generateSolanaWallet,
     getWalletBalance,
     airdropSol,
+    importWalletWithKeyphrase,
+    generate_Sol_wallet_Phantom_Compatible
 } = require('./src/services/solanaWalletService');
 
 const {
@@ -14,19 +18,21 @@ const {
 const { setSolanaEndpoint } = require('./src/services/solanaConnectionService');
 
 async function test() {
-    // Generate a mnemonic phrase
-    const mnemonic = generateMnemonic();
-    console.log('Mnemonic:', mnemonic);
+    /*  // Generate a mnemonic phrase
+      const mnemonic = generateMnemonic();
+      console.log('Mnemonic:', mnemonic);
+  
+      // Generate a wallet
+      const wallet = generateWallet();
+      console.log('Wallet:', wallet);*/
 
-    // Generate a wallet
-    const wallet = generateWallet();
-    console.log('Wallet:', wallet);
-
+    const wallet = await generateSolanaWallet();
+    const wallet2 = await generate_Sol_wallet_Phantom_Compatible();
     // Set the Solana endpoint
     setSolanaEndpoint('devnet');
 
     // Get the wallet balance
-    const walletBalance = await getWalletBalance(wallet.address);
+    const walletBalance = await getWalletBalance(wallet.publicKey);
     console.log('Wallet Balance:', walletBalance);
 
     // Get the token balance
@@ -41,6 +47,11 @@ async function test() {
     // Get the token transaction history
     const tokenTransactionHistory = await getTokenTransactionHistory(wallet.address, tokenAddress);
     console.log('Token Transaction History:', tokenTransactionHistory);
+
+
+
+
+
 
     // Airdrop SOL to the wallet
     /*const airdropResult = await airdropSol(wallet.address);

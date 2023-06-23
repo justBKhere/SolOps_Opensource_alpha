@@ -1,4 +1,9 @@
 const solanaWeb3 = require('@solana/web3.js');
+const { Keypair, Wallet } = require('@solana/web3.js');
+
+let util = require('util');
+let ed25519_hd_key = require('ed25519-hd-key');
+
 const bip39 = require('bip39');
 const config = require('../utils/config');
 const { getConnection } = require('./solanaConnectionService');
@@ -10,6 +15,59 @@ function generateMnemonic() {
     const mnemonic = bip39.generateMnemonic();
     return mnemonic;
 }
+
+//Generate solana wallet using mnemonics
+async function generateSolanaWallet() {
+    const mnemonic = bip39.generateMnemonic();
+    const seed = await bip39.mnemonicToSeed(mnemonic);
+    const seedArray = new Uint8Array(seed);
+    const keypair = Keypair.fromSeed(seedArray.slice(0, 32));
+
+    console.log(mnemonic);
+    console.log(keypair.publicKey.toBase58());
+    return {
+        publicKey: keypair.publicKey.toBase58(),
+        secretKey: keypair.secretKey.toString(),
+        mnemonic: mnemonic,
+    };
+}
+
+//npm install bip39 ed25519-hd-key @solana/web3.js
+
+
+function full_inspect_obj(obj) {
+    return util.inspect(obj, {
+        showHidden: true,
+        depth: null,
+        colors: false,
+        maxArrayLength: null
+    });
+}
+
+function generate_Sol_wallet_Phantom_Compatible() {
+    let wallet = {};
+    let mnemonic = bip39.generateMnemonic();
+    let master_seed = bip39.mnemonicToSeedSync(mnemonic);
+    let index = 0;
+    let derived_path = "m/44'/501'/" + index + "'/0'";
+    let derived_seed = ed25519_hd_key.derivePath(derived_path, master_seed.toString('hex')).key;
+    wallet.keypair = solanaWeb3.Keypair.fromSeed(derived_seed);
+    wallet.mnemonic = mnemonic;
+    wallet.publicAddress = wallet.keypair.publicKey.toBase58();
+    console.log("wallet2" + wallet.mnemonic);
+    console.log(wallet.keypair.publicKey.toBase58());
+    return wallet;
+}
+
+
+async function loadSolanaWallet(mnemonic) {
+    const seed = await bip39.mnemonicToSeed(mnemonic);
+    const seedArray = new Uint8Array(seed);
+    const keypair = Keypair.fromSeed(seedArray.slice(0, 32));
+
+    return keypair;
+}
+
 
 function generateWallet() {
     // Generate a new mnemonic phrase
@@ -88,4 +146,6 @@ module.exports = {
     generateWallet,
     getWalletBalance,
     airdropSol,
+    generateSolanaWallet,
+    generate_Sol_wallet_Phantom_Compatible,
 };
